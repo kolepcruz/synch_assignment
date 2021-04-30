@@ -4,19 +4,18 @@
 #include <ncurses.h>
 #include <ctype.h>
 #include <string>
-// biblioteca útil para mensurar tamanhos do terminal.
-#include <sys/ioctl.h>
+#include <sys/ioctl.h> // biblioteca útil para mensurar tamanhos do terminal.
 
 #ifdef _WIN32
-#define _WIN32
-#include <Windows.h>
+    #define _WIN32
+    #include <Windows.h>
 #else
-#include <unistd.h>
+    #include <unistd.h>
 #endif
+
 typedef unsigned int ui;
 
-using namespace std;
-
+using namespace::std;
 int frontend();
 void drawInicial(int n_leitos, int n_lutadores);
 void intro();
@@ -25,5 +24,5 @@ void desenhaLeito(WINDOW * enfermaria, int n_leitos);
 int get_lutadores();
 int get_leitos();
 
-#endif
+#endif //__VIEW_H__
 

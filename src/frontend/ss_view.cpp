@@ -1,4 +1,4 @@
-#include <ss_view.h>
+#include "ss_view.h"
 
 int get_leitos(){
     int leitos, y, x;
