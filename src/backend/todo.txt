@@ -1,0 +1,29 @@
+produtor -> enfermaria
+consumidor -> lutadores
+
+Vamos usar um semaforo
+Ele vai começar com n_leitos
+Para lutar, tem que wait pela enfermaria
+
+(backend -> frontend)?
+server_push():
+    Quando houver uma atualização importante para o display chamar essa função
+    baseado em fps
+
+enfermaria
+-> n_leitos, semaforo
+-> ^ + array(leitos/lutadores)
+
+arena
+-> limite_lutadores
+-> ^ + array(lutadores)
+
+lutador
+-> hp_inicial, semaforo, atck_pwr
+-> ^ + id, hp_atual, estado
+-> m : receive_atck() 
+
+pooler
+-> função_atualiza_front, array(lutadores)
+
+Colocar CmakeLists decente
