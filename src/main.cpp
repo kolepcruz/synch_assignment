@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "frontend/ss_view.h"
+#include "frontend/ss_view.hpp"
 
 #define NUM_THREADS 5
 

@@ -4,6 +4,5 @@ project(synch_assignment)
 
 
 set(CMAKE_CXX_FLAGS "-pthread -Wall -g -lncurses ")
-add_executable(synch_assignment main.cpp frontend/ss_view.cpp)
-
+add_executable(synch_assignment main.cpp frontend/ss_view.cpp backend/Saiyan.cpp backend/Infirmary.cpp backend/Arena.cpp backend/Pit.cpp )
 target_link_libraries(synch_assignment ncurses)

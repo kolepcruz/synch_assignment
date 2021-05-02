@@ -27,3 +27,6 @@ pooler
 -> função_atualiza_front, array(lutadores)
 
 Colocar CmakeLists decente
+
+implementar enum para os diferentes estados que da para cada Saiyan ter en determinado momento
+

@@ -15,7 +15,7 @@
 
 typedef unsigned int ui;
 
-using namespace::std;
+using namespace std;
 int frontend();
 void drawInicial(int n_leitos, int n_lutadores);
 void intro();
