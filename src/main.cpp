@@ -1,7 +1,8 @@
 #include <pthread.h>
 #include <stdlib.h>
-#include "frontend/ss_view.h"
 #include <iostream>
+
+#include "frontend/ss_view.hpp"
 
 #define NUM_THREADS 5
 
@@ -9,18 +10,18 @@ using namespace ::std;
 
 static pthread_mutex_t func_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-int values[] = {0,0,0,0,0};
+int values[] = {0, 0, 0, 0, 0};
 
 void func() {
     pthread_mutex_lock(&func_mutex);
-    
+
     pthread_mutex_unlock(&func_mutex);
 }
 
 void* worker(void* arg) {
     int value = *((int*)arg);
     cout << value << endl;
-    cout << value*10 << endl;
+    cout << value * 10 << endl;
     return 0;
 }
 
@@ -35,8 +36,6 @@ int main() {
     for (int i = 0; i < NUM_THREADS; ++i) {
         result = pthread_join(threads[i], NULL);
     }
-    
-    frontend();
 
     return 0;
 }
