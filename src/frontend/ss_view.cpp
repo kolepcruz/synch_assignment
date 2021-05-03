@@ -1,44 +1,5 @@
 #include <ss_view.h>
 
-int get_leitos(){
-    int leitos, y, x;
-    string number;
-    while(1){
-        leitos = getch();
-        if (leitos == 10){
-            if (number.size() > 0){
-                printw("\nEssa é a sua string: %s", number);
-                break;
-            }
-        } else if (leitos == 127){
-            getyx(stdscr, y, x);
-            move(y, x-1);
-            printw(" ");
-            move(y, x-1);
-        } else {
-            if (isdigit(leitos)){
-               number.append(to_string(leitos));
-            }
-            printw("%c", leitos);
-        }
-    }
-    clear();
-    return leitos;
-}
-
-int get_lutadores(){
-    int lutadores;
-    while(1){
-        lutadores = getch();
-        if (lutadores == 10){
-            break;
-        }
-        printw("%c", lutadores);
-    }
-    clear();
-    return lutadores;
-}
-
 void desenhaLeito(WINDOW * enfermaria, int n_leitos)
 {
   int width_enf, height_enf;
@@ -60,18 +21,10 @@ void desenhaLeito(WINDOW * enfermaria, int n_leitos)
       if (n_col*(j-1) + i <= n_leitos)
       {
         // subtract i by -1 because the warriors will be at second pos.
-        if(has_colors())
-        {
-          wattron(enfermaria, COLOR_PAIR(2));
-          mvwprintw(enfermaria, j*margin_y, i*margin_x-1, "___/");
-          wattroff(enfermaria, COLOR_PAIR(2));
-        }
-        else 
-        {
-          wattron(enfermaria, A_REVERSE);
-          mvwprintw(enfermaria, j*margin_y, i*margin_x-1, "___/");
-          wattroff(enfermaria, A_REVERSE);
-        }
+        wattron(enfermaria, COLOR_PAIR(2));
+        mvwprintw(enfermaria, j*margin_y, i*margin_x-1, "___/");
+        wattroff(enfermaria, COLOR_PAIR(2));
+        
       }
     }
   }

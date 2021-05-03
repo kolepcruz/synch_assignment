@@ -1,6 +1,6 @@
 #include <pthread.h>
 #include <stdlib.h>
-#include <../src/frontend/ss_view.h>
+#include "frontend/ss_view.h"
 #include <iostream>
 
 #define NUM_THREADS 5
@@ -36,5 +36,7 @@ int main() {
         result = pthread_join(threads[i], NULL);
     }
     
+    frontend();
+
     return 0;
 }
