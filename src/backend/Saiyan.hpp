@@ -17,12 +17,12 @@ class Saiyan {
     unsigned int current_hp;
     unsigned int attack_pwr;
     State current_state;
-     Arena *m_arena;
+    Arena *m_arena;
     int try_enter_pit();
 
    public:
     Saiyan(unsigned int total_hp, unsigned int attack_pwr, unsigned int id,
-            Arena *arena);
+           Arena *arena);
     void receive_attack(Saiyan enemy);
     void log_saiyan();
     void behavior();

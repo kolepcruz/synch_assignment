@@ -50,6 +50,10 @@ int main() {
         saiyans.push_back(new Saiyan(100, 10, i, arena));
     }
     Updater* updater = new Updater(arena, saiyans);
+    pthread_t thread_updater;
+    if (pthread_create(&thread_updater, NULL, Updater::pthread_printer, updater)) {
+        exit(1);
+    }
     usleep(4000000);
     // while (1) {
     // }

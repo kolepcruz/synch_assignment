@@ -7,12 +7,14 @@
 class Saiyan;
 class Pit {
    private:
-    Saiyan *lutador1;
-    Saiyan *lutador2;
+    int id;
     sem_t m_sem;
 
    public:
-    Pit();
+    Saiyan *lutador1;
+    Saiyan *lutador2;
+    Pit(int id);
     sem_t *get_sem() { return &m_sem; }
+    int get_id() { return id; }
 };
 #endif  //__PIT_HPP__
