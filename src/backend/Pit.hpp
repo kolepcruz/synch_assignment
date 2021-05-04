@@ -6,9 +6,10 @@
 #include "Saiyan.hpp"
 class Saiyan;
 class Pit {
-   private:
+  public:
     Saiyan *lutador1;
     Saiyan *lutador2;
+  private:
     sem_t m_sem;
 
    public:

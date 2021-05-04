@@ -1,43 +1,8 @@
+/*
+ * Vamos supor que o número de pits é pré-definido. 
+*/
+
 #include "ss_view.hpp"
-
-int get_leitos() {
-    int leitos, y, x;
-    string number;
-    while (1) {
-        leitos = getch();
-        if (leitos == 10) {
-            if (number.size() > 0) {
-                printw("\nEssa é a sua string: %s", number);
-                break;
-            }
-        } else if (leitos == 127) {
-            getyx(stdscr, y, x);
-            move(y, x - 1);
-            printw(" ");
-            move(y, x - 1);
-        } else {
-            if (isdigit(leitos)) {
-                number.append(to_string(leitos));
-            }
-            printw("%c", leitos);
-        }
-    }
-    clear();
-    return leitos;
-}
-
-int get_lutadores() {
-    int lutadores;
-    while (1) {
-        lutadores = getch();
-        if (lutadores == 10) {
-            break;
-        }
-        printw("%c", lutadores);
-    }
-    clear();
-    return lutadores;
-}
 
 void desenhaLeito(WINDOW* enfermaria, int n_leitos) {
     int width_enf, height_enf;
@@ -72,6 +37,47 @@ void desenhaLeito(WINDOW* enfermaria, int n_leitos) {
     }
     wrefresh(enfermaria);
 }
+
+/*
+  * PROXIMOS PASSOS
+  * alterar cor dos lutadores quando atacar/apanhar;
+  * fazer funcao de poderes;
+*/
+
+void desenhaLutadoresRigue(WINDOW* ringue, vector<Pit> vtr_pits) {
+    int n_pits = vtr_pits.size(); // , n_lut = n_pits * 2;
+    int width_ringue, height_ringue;
+    int margin_x, margin_y, dist_x_pits, dist_y_pits, n_lin, n_col;
+    int d_luts_pit; 
+    getmaxyx(ringue, height_ringue, width_ringue);
+    float ratio = (float)((float)height_ringue / width_ringue);
+
+    n_col = round(sqrt((float)n_pits / ratio));
+    n_lin = ceil(ratio * n_col);
+
+    margin_x = dist_x_pits = width_ringue / (n_col + 1);
+    margin_y = dist_y_pits = height_ringue / (n_lin + 1);
+    
+    d_luts_pit = dist_x_pits / 3.5;
+
+    for (int i = 1; i <= n_col; i++) {
+        for (int j = 1; j <= n_lin; j++) {
+            int id_pit = n_col * (j - 1) + i;
+            if (id_pit <= n_pits) 
+            {
+                                        // 65 is pos "A" in ASCII
+                string s_l1 = to_string(65 + (const char) vtr_pits[id_pit].lutador1->get_id()); 
+                const char* l1 = s_l1.c_str();
+                string s_l2 = to_string(65 + (const char) vtr_pits[id_pit].lutador2->get_id()); 
+                const char* l2 = s_l1.c_str();
+                mvwprintw(ringue, j * margin_y, i * margin_x - d_luts_pit, l1);
+                mvwprintw(ringue, j * margin_y, i * margin_x + d_luts_pit, l2);
+            }
+        }
+    }
+    wrefresh(ringue);
+}
+
 
 void desenhaLutadores(WINDOW* ringue, int n_lut) {
     int width_ringue, height_ringue;
@@ -245,18 +251,62 @@ int frontend() {
         init_pair(5, COLOR_BLUE, A_NORMAL);
     }
 
-    int n_leitos = 4;      // get_leitos();
-    int n_lutadores = 10;  // get_lutadores();
+    // para reste
+    int n_leitos = 4;      
+    // n_leitos = Infirmary.get_total_beds();
+    int n_lutadores = 10;  
+    // n_lutadores = Arena.get_pits().size() * 2;
 
     drawInicial(n_leitos,
                 n_lutadores);  // desenhar as telas principais e iniciass
-    /*
+    
     while (1){
-        //ativar funções para coletar valores de forma bonitinha
+        
     }
-    */
+    
     while (getch() != 27) {
     }
     endwin();  // fecha a tela
     return 1;
+}
+
+
+
+int get_leitos() {
+    int leitos, y, x;
+    string number;
+    while (1) {
+        leitos = getch();
+        if (leitos == 10) {
+            if (number.size() > 0) {
+                printw("\nEssa é a sua string: %s", number);
+                break;
+            }
+        } else if (leitos == 127) {
+            getyx(stdscr, y, x);
+            move(y, x - 1);
+            printw(" ");
+            move(y, x - 1);
+        } else {
+            if (isdigit(leitos)) {
+                number.append(to_string(leitos));
+            }
+            printw("%c", leitos);
+        }
+    }
+    clear();
+    return leitos;
+}
+
+int get_lutadores() {
+    int lutadores;
+    while (1) {
+        lutadores = getch();
+        if (lutadores == 10) {
+            break;
+        }
+        printw("%c", lutadores);
+    }
+    clear();
+    return lutadores;
 }

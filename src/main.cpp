@@ -36,6 +36,7 @@ int main() {
     for (int i = 0; i < NUM_THREADS; ++i) {
         result = pthread_join(threads[i], NULL);
     }
+    frontend();
 
     return 0;
 }

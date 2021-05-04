@@ -5,6 +5,9 @@
 #include <ctype.h>
 #include <string>
 #include <sys/ioctl.h> // biblioteca útil para mensurar tamanhos do terminal.
+#include "Infirmary.hpp"
+#include "Arena.hpp"
+#include "Pit.hpp"
 
 #ifdef _WIN32
     #define _WIN32

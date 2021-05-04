@@ -9,7 +9,7 @@
 
 class Arena {
     // É uma classe de dados? SIM/NAO
-   private:
+  private:
     std::vector<Pit> m_pits;
     sem_t m_sem;
 
