@@ -2,7 +2,7 @@
 
 
 Arena::Arena(int n_pits) {
-    for (int i = 0; i < m_n_pits; i++) {
+    for (int i = 0; i < n_pits; i++) {
         m_pits.push_back(Pit());
     }
     // TODO Verifcar erro

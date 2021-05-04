@@ -13,6 +13,6 @@ class Pit {
 
    public:
     Pit();
-    sem_t get_sem() { return m_sem; }
+    sem_t *get_sem() { return &m_sem; }
 };
 #endif  //__PIT_HPP__

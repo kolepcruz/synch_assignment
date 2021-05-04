@@ -19,6 +19,6 @@ class Infirmary {
     sem_t get_semaphore() { return this->sem; }
     // std::vector<Saiyan> get_patients
     void print_meme();
-}
+};
 
 #endif  //__INFIRMARY_HPP__
