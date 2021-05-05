@@ -1,11 +1,8 @@
 #include <pthread.h>
 #include <stdlib.h>
-<<<<<<< HEAD
-=======
 #include <unistd.h>
 
 #include <chrono>
->>>>>>> b7e2157038b316161674139ff4abcfc2639c3cb7
 #include <iostream>
 #include <vector>
 
