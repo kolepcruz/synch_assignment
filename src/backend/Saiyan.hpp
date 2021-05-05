@@ -2,6 +2,7 @@
 #define __SAIYAN_H__
 
 #include "Arena.hpp"
+class Arena;
 
 class Saiyan {
     typedef enum {
@@ -16,12 +17,12 @@ class Saiyan {
     unsigned int current_hp;
     unsigned int attack_pwr;
     State current_state;
-    Arena &arena;
+    Arena *m_arena;
     int try_enter_pit();
 
    public:
     Saiyan(unsigned int total_hp, unsigned int attack_pwr, unsigned int id,
-           const Arena &arena);
+           Arena *arena);
     void receive_attack(Saiyan enemy);
     void log_saiyan();
     void behavior();

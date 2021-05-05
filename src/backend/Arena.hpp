@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Pit.hpp"
-
+class Pit;
 class Arena {
     // É uma classe de dados? SIM/NAO
   private:

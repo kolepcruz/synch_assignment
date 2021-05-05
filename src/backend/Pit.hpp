@@ -6,14 +6,15 @@
 #include "Saiyan.hpp"
 class Saiyan;
 class Pit {
-  public:
-    Saiyan *lutador1;
-    Saiyan *lutador2;
-  private:
+   private:
+    int id;
     sem_t m_sem;
 
    public:
-    Pit();
-    sem_t get_sem() { return m_sem; }
+    Saiyan *lutador1;
+    Saiyan *lutador2;
+    Pit(int id);
+    sem_t *get_sem() { return &m_sem; }
+    int get_id() { return id; }
 };
 #endif  //__PIT_HPP__

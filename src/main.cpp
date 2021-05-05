@@ -1,7 +1,17 @@
 #include <pthread.h>
 #include <stdlib.h>
-#include <iostream>
+<<<<<<< HEAD
+=======
+#include <unistd.h>
 
+#include <chrono>
+>>>>>>> b7e2157038b316161674139ff4abcfc2639c3cb7
+#include <iostream>
+#include <vector>
+
+#include "backend/Arena.hpp"
+#include "backend/Saiyan.hpp"
+#include "backend/Updater.cpp"
 #include "frontend/ss_view.hpp"
 
 #define NUM_THREADS 5
@@ -36,7 +46,20 @@ int main() {
     for (int i = 0; i < NUM_THREADS; ++i) {
         result = pthread_join(threads[i], NULL);
     }
-    frontend();
-
+    Arena* arena = new Arena(5);
+    std::vector<Saiyan*> saiyans;
+    int n_saiyans = 5;
+    for (int i = 0; i < n_saiyans; ++i) {
+        saiyans.push_back(new Saiyan(100, 10, i, arena));
+    }
+    Updater* updater = new Updater(arena, saiyans);
+    pthread_t thread_updater;
+    if (pthread_create(&thread_updater, NULL, Updater::pthread_printer, updater)) {
+        exit(1);
+    }
+    usleep(4000000);
+    // while (1) {
+    // }
+    delete updater;
     return 0;
 }
