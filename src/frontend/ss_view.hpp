@@ -5,9 +5,9 @@
 #include <ctype.h>
 #include <string>
 #include <sys/ioctl.h> // biblioteca útil para mensurar tamanhos do terminal.
-#include "Infirmary.hpp"
-#include "Arena.hpp"
-#include "Pit.hpp"
+#include "../backend/Infirmary.hpp"
+#include "../backend/Arena.hpp"
+#include "../backend/Pit.hpp"
 
 #ifdef _WIN32
     #define _WIN32
@@ -21,9 +21,12 @@ typedef unsigned int ui;
 using namespace std;
 int frontend();
 void drawInicial(int n_leitos, int n_lutadores);
+// void desenhaSayiansLeito (vector<Pit> pits_enf); 
+void desenhaSayiansRingue (vector<Pit> vtr_pits); 
+void drawSayians();
 void intro();
-void desenhaLutadores(WINDOW* ringue, int n_lut);
-void desenhaLeito(WINDOW * enfermaria, int n_leitos);
+void desenhaLutadoresIni(int n_lut);
+void desenhaLeitoIni (int n_leitos);
 int get_lutadores();
 int get_leitos();
 

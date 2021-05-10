@@ -43,6 +43,7 @@ int main() {
     for (int i = 0; i < NUM_THREADS; ++i) {
         result = pthread_join(threads[i], NULL);
     }
+    
     Arena* arena = new Arena(5);
     std::vector<Saiyan*> saiyans;
     int n_saiyans = 5;
@@ -58,5 +59,7 @@ int main() {
     // while (1) {
     // }
     delete updater;
+    frontend();
+
     return 0;
 }
