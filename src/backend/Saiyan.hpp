@@ -1,16 +1,21 @@
 #ifndef __SAIYAN_H__
 #define __SAIYAN_H__
 
+#include <unistd.h>
+
+#include <iostream>
+
 #include "Arena.hpp"
+
 class Arena;
 
-class Saiyan {
-    typedef enum {
-        FIGHTING,
-        HEALING,
-        WAITING,
-    } State;
+typedef enum {
+    FIGHTING,
+    HEALING,
+    WAITING,
+} State;
 
+class Saiyan {
    private:
     unsigned int id;
     unsigned int total_hp;
@@ -18,14 +23,14 @@ class Saiyan {
     unsigned int attack_pwr;
     State current_state;
     Arena *m_arena;
-    int try_enter_pit();
 
    public:
     Saiyan(unsigned int total_hp, unsigned int attack_pwr, unsigned int id,
            Arena *arena);
     void receive_attack(Saiyan enemy);
     void log_saiyan();
-    void behavior();
+    int current_pit;
+    int try_enter_pit();
 
     // IGetters and setters
     State get_current_state() { return this->current_state; }
@@ -33,6 +38,7 @@ class Saiyan {
     unsigned int get_total_hp() { return this->total_hp; }
     unsigned int get_current_hp() { return this->current_hp; }
     unsigned int get_attack_pwr() { return this->attack_pwr; }
+    Arena* &get_arena() { return this->m_arena; }
     //
     void set_current_state(State state) { this->current_state = state; }
     void set_id(unsigned int id) { this->id = id; }
@@ -44,5 +50,7 @@ class Saiyan {
         this->attack_pwr = attack_pwr;
     }
 };
+
+void behavior(void* myself);
 
 #endif  //__SAIYAN_H__
