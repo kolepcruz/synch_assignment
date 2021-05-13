@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "Arena.hpp"
+#define LIFE_THRESHOLD 500
 
 class Arena;
 
@@ -29,6 +30,8 @@ class Saiyan {
            Arena *arena);
     void receive_attack(Saiyan enemy);
     void log_saiyan();
+    void heal();
+
     int current_pit;
     int try_enter_pit();
 
@@ -38,7 +41,7 @@ class Saiyan {
     unsigned int get_total_hp() { return this->total_hp; }
     unsigned int get_current_hp() { return this->current_hp; }
     unsigned int get_attack_pwr() { return this->attack_pwr; }
-    Arena* &get_arena() { return this->m_arena; }
+    Arena *&get_arena() { return this->m_arena; }
     //
     void set_current_state(State state) { this->current_state = state; }
     void set_id(unsigned int id) { this->id = id; }
@@ -51,6 +54,6 @@ class Saiyan {
     }
 };
 
-void behavior(void* myself);
+void behavior(void *myself);
 
 #endif  //__SAIYAN_H__

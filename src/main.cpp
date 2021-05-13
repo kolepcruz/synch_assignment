@@ -7,18 +7,19 @@
 #include <vector>
 
 #include "backend/Arena.hpp"
+#include "backend/Context.hpp"
+#include "backend/Infirmary.hpp"
 #include "backend/Saiyan.hpp"
 #include "backend/Updater.cpp"
 #include "frontend/ss_view.hpp"
-#include "backend/Infirmary.hpp"
 
 #define NUM_THREADS 5
-#define SAIYAN_AMMOUNT 2
+#define SAIYAN_AMMOUNT 4
 
 using namespace ::std;
-typedef void * (*THREADFUNCPTR)(void *);
+typedef void* (*THREADFUNCPTR)(void*);
 
-void run_backend(){
+void run_backend() {
     Infirmary* inf = new Infirmary(2);
     Arena* arena = new Arena(5);
     std::vector<Saiyan*> saiyans;
@@ -27,34 +28,31 @@ void run_backend(){
     for (int i = 0; i < n_saiyans; ++i) {
         saiyans.push_back(new Saiyan(100, 10, i, arena));
     }
-    for(int i = 0; i < n_saiyans;++i){
-        Saiyan* saiyan = saiyans[i];
-        std::cout<<saiyans[i]->get_id()<<std::endl;
-        // std::cout<<saiyans[i]->get_arena()<<std::endl;
-
-        if(pthread_create(&threads[i], NULL,(THREADFUNCPTR) &behavior, (void *) saiyans[i]) != 0) {
+    for (int i = 0; i < n_saiyans; ++i) {
+        Context* p_context = new Context{saiyans[i], *inf};
+        if (pthread_create(&threads[i], NULL, (THREADFUNCPTR)behavior,
+                           (void*)p_context) != 0) {
             perror("unable to create thread");
             exit(1);
         }
-
     }
-    for(int i = 0; i < n_saiyans;++i){
-        pthread_join(threads[i],NULL);
+    for (int i = 0; i < n_saiyans; ++i) {
+        pthread_join(threads[i], NULL);
     }
 
     // Updater* updater = new Updater(arena, saiyans);
     // pthread_t thread_updater;
-    // if (pthread_create(&thread_updater, NULL, Updater::pthread_printer, updater)) {
+    // if (pthread_create(&thread_updater, NULL, Updater::pthread_printer,
+    // updater)) {
     //     exit(1);
     // }
     // usleep(4000000);
     // // while (1) {
-        
+
     // // }
     // delete updater;
     return;
 }
-
 
 int main() {
     run_backend();

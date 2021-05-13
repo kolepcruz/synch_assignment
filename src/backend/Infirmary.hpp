@@ -16,7 +16,7 @@ class Infirmary {
    public:
     Infirmary(unsigned int n_beds);
     unsigned int get_total_beds() { return this->total_beds; }
-    sem_t get_semaphore() { return this->m_sem; }
+    sem_t* get_semaphore() { return &this->m_sem; }
     // std::vector<Saiyan> get_patients
     void print_meme();
 };
