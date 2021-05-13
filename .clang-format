@@ -4,3 +4,4 @@ BasedOnStyle: Google
 Language: Cpp
 PointerAlignment: Left
 IndentWidth: 4
+ColumnLimit: 0
