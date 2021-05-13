@@ -20,8 +20,8 @@ using namespace ::std;
 typedef void* (*THREADFUNCPTR)(void*);
 
 void run_backend() {
-    Infirmary* inf = new Infirmary(2);
-    Arena* arena = new Arena(5);
+    Infirmary* inf = new Infirmary(4);
+    Arena* arena = new Arena(2);
     std::vector<Saiyan*> saiyans;
     int n_saiyans = SAIYAN_AMMOUNT;
     pthread_t threads[n_saiyans];
@@ -36,21 +36,20 @@ void run_backend() {
             exit(1);
         }
     }
+
+    Updater* updater = new Updater(arena, saiyans);
+    pthread_t thread_updater;
+    if (pthread_create(&thread_updater, NULL, Updater::pthread_printer,
+    updater)) {
+        exit(1);
+    }
+
+    
+    usleep(4000000);
     for (int i = 0; i < n_saiyans; ++i) {
         pthread_join(threads[i], NULL);
     }
-
-    // Updater* updater = new Updater(arena, saiyans);
-    // pthread_t thread_updater;
-    // if (pthread_create(&thread_updater, NULL, Updater::pthread_printer,
-    // updater)) {
-    //     exit(1);
-    // }
-    // usleep(4000000);
-    // // while (1) {
-
-    // // }
-    // delete updater;
+    delete updater;
     return;
 }
 

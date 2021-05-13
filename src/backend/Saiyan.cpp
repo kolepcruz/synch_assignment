@@ -1,61 +1,61 @@
 #include "Saiyan.hpp"
 
 #include "Context.hpp"
-
-std::string arr[] = {"WAITING", "HEALING", "FIGHTING"};
-
+// este es el codigo con mas memory leak que ya hice
 // esta funcion deberia receber un struct de argumentos que seria el contexto,
-// recibiendo la thread y los punteros para la enfermaria, etc
+// recibiendo la thread y los punteros para la enfermaria, etc 
+// para mi en este proyecto saiyan == thread 
 void behavior(void* ptr) {
     Context* context = (Context*)(ptr);
-    Saiyan* myself = static_cast<Saiyan*>(context->self);
+    Saiyan* myself = static_cast<Saiyan*>(context->self); 
     Infirmary inf = static_cast<Infirmary>(context->inf);
     bool first = false;
     // poner un loop que rueda hasta que un saiyan le pase a determinado
     // parametro
     while (myself->get_total_hp() < LIFE_THRESHOLD) {
-        while (myself->try_enter_pit() != 0)
-            ;
-        std::cout << "Saiyan #" << myself->get_id() << std::endl;
+        while (myself->try_enter_pit() != 0);
+        // std::cout << "Saiyan #" << myself->get_id() << std::endl;
         // std::cout << myself->get_current_state() << std::endl;
 
-        Pit current_pit = myself->get_arena()->get_pits()[myself->current_pit];
-        while (!current_pit.ready_to_fight) {
-            if (current_pit.lutador1 != nullptr &&
-                current_pit.lutador2 != nullptr)
-                current_pit.ready_to_fight = true;
+        Pit* current_pit = &myself->get_arena()->get_pits()[myself->current_pit];
+        while (!current_pit->ready_to_fight) {
+            if (current_pit->lutador1 != nullptr &&
+                current_pit->lutador2 != nullptr)
+                current_pit->ready_to_fight = true;
         }
-
         myself->set_current_state(FIGHTING);
-        first = (current_pit.lutador1 == myself);
-
+        first = (current_pit->lutador1 == myself);
         // ate aqui tenho que confirmar que os dois lutadores estão na parada
 
         // aqui pode começar a luta, olhar semaforo da enfermaria se esta com
         // disponibilidade
         sem_wait(inf.get_semaphore());
-        // FIXME os dois não podem sair, apenas o que "morrer"
         while (myself->get_current_hp() > 0) {
-            if (current_pit.ready_to_fight){
-                // FIXME está como busy waiting
-                sem_wait(current_pit.get_act_sem());
-                if (first)
-                    myself->receive_attack(*current_pit.lutador2);
-                else
-                    myself->receive_attack(*current_pit.lutador1);
-                sem_post(current_pit.get_act_sem());  //queria que fosse mutex
+            // FIXME está como busy waiting
+            sem_wait(current_pit->get_act_sem());  //semaforo de distribuição de porrada
+            if (current_pit->ready_to_fight) {
+                if (first) {
+                    myself->receive_attack(*current_pit->lutador2);
+                    
+                } else {
+                    myself->receive_attack(*current_pit->lutador1);
+                }
+                usleep(200); //adiciona tempo de distribuição de porrada
             }
+            sem_post(current_pit->get_act_sem());
+            //queria que fosse mutex
         }
         //sai do pit
+        current_pit->ready_to_fight = false;
         myself->set_current_state(HEALING);
         if (first) {
-            current_pit.lutador1 = nullptr;
+            current_pit->lutador1 = nullptr;
         } else {
-            current_pit.lutador2 = nullptr;
+            current_pit->lutador2 = nullptr;
         }
-        current_pit.ready_to_fight = false;
-        sem_post(current_pit.get_sem());
+        sem_post(current_pit->get_sem());
         myself->heal();
+        sem_post(inf.get_semaphore());
     }
     // rotina para matar o resto das threads
 }
@@ -74,6 +74,7 @@ void Saiyan::heal() {
     while (this->get_current_hp() < this->get_total_hp()) {
         this->current_hp++;
         usleep(200);
+        // std::cout << this->id << "# Saiyan is healing by " << this->get_current_hp() <<" of "<<  this->get_total_hp() << std::endl;
     }
 }
 
