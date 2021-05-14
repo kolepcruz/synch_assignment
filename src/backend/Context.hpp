@@ -6,6 +6,7 @@
 struct Context{
     Saiyan* self;
     Infirmary &inf;
+    sem_t &backend_sem;
 };
 
 #endif //__CONTEXT_HPP__

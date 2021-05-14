@@ -9,6 +9,10 @@ Pit::Pit(int id) {
 
 }
 
+bool Pit::is_full(){
+    return this->lutador1 != nullptr && this->lutador2 != nullptr;
+}
+
 bool Pit::is_empty(){
     return this->lutador1 == nullptr && this->lutador2 == nullptr;
 }

@@ -14,6 +14,7 @@ typedef enum {
     FIGHTING,
     HEALING,
     WAITING,
+    FINISHED
 } State;
 
 class Saiyan {

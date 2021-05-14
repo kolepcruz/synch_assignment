@@ -13,13 +13,17 @@
 #include "backend/Updater.cpp"
 #include "frontend/ss_view.hpp"
 
-#define NUM_THREADS 5
 #define SAIYAN_AMMOUNT 4
 
 using namespace ::std;
 typedef void* (*THREADFUNCPTR)(void*);
 
+//TODO implement semaphore for main, read semaphore value 
 void run_backend() {
+    sem_t backend_sema;
+    sem_init(&backend_sema,1,SAIYAN_AMMOUNT-1); //n - 1 saiyan ira virar super saiyan
+    sem_t *p_backend_sema = &backend_sema;
+    int* result;
     Infirmary* inf = new Infirmary(4);
     Arena* arena = new Arena(2);
     std::vector<Saiyan*> saiyans;
@@ -29,7 +33,7 @@ void run_backend() {
         saiyans.push_back(new Saiyan(100, 10, i, arena));
     }
     for (int i = 0; i < n_saiyans; ++i) {
-        Context* p_context = new Context{saiyans[i], *inf};
+        Context* p_context = new Context{saiyans[i], *inf, *p_backend_sema};
         if (pthread_create(&threads[i], NULL, (THREADFUNCPTR)behavior,
                            (void*)p_context) != 0) {
             perror("unable to create thread");
@@ -47,7 +51,8 @@ void run_backend() {
     
     usleep(4000000);
     for (int i = 0; i < n_saiyans; ++i) {
-        pthread_join(threads[i], NULL);
+        pthread_join(threads[i],NULL);
+        
     }
     delete updater;
     return;

@@ -17,6 +17,8 @@ class Pit {
     Pit(int id);
     bool ready_to_fight;
     bool is_empty();
+    bool is_full();
+    int get_nsaiyans();
     sem_t *get_sem() { return &m_sem; }
     sem_t *get_act_sem() { return &m_act; }
     int get_id() { return id; }
