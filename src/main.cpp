@@ -7,59 +7,58 @@
 #include <vector>
 
 #include "backend/Arena.hpp"
+#include "backend/Context.hpp"
+#include "backend/Infirmary.hpp"
 #include "backend/Saiyan.hpp"
 #include "backend/Updater.cpp"
 #include "frontend/ss_view.hpp"
 
-#define NUM_THREADS 5
+#define SAIYAN_AMMOUNT 4
 
 using namespace ::std;
+typedef void* (*THREADFUNCPTR)(void*);
 
-static pthread_mutex_t func_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-int values[] = {0, 0, 0, 0, 0};
-
-void func() {
-    pthread_mutex_lock(&func_mutex);
-
-    pthread_mutex_unlock(&func_mutex);
-}
-
-void* worker(void* arg) {
-    int value = *((int*)arg);
-    cout << value << endl;
-    cout << value * 10 << endl;
-    return 0;
-}
-
-int main() {
-    pthread_t threads[NUM_THREADS];
-    int result;
-    int args[] = {1, 2, 3, 4, 5};
-    for (int i = 0; i < NUM_THREADS; ++i) {
-        result = pthread_create(&threads[i], NULL, worker, (void*)&args[i]);
-    }
-
-    for (int i = 0; i < NUM_THREADS; ++i) {
-        result = pthread_join(threads[i], NULL);
-    }
-    
-    Arena* arena = new Arena(5);
+//TODO implement semaphore for main, read semaphore value 
+void run_backend() {
+    sem_t backend_sema;
+    sem_init(&backend_sema,1,SAIYAN_AMMOUNT-1); //n - 1 saiyan ira virar super saiyan
+    sem_t *p_backend_sema = &backend_sema;
+    int* result;
+    Infirmary* inf = new Infirmary(4);
+    Arena* arena = new Arena(2);
     std::vector<Saiyan*> saiyans;
-    int n_saiyans = 5;
+    int n_saiyans = SAIYAN_AMMOUNT;
+    pthread_t threads[n_saiyans];
     for (int i = 0; i < n_saiyans; ++i) {
         saiyans.push_back(new Saiyan(100, 10, i, arena));
     }
+    for (int i = 0; i < n_saiyans; ++i) {
+        Context* p_context = new Context{saiyans[i], *inf, *p_backend_sema};
+        if (pthread_create(&threads[i], NULL, (THREADFUNCPTR)behavior,
+                           (void*)p_context) != 0) {
+            perror("unable to create thread");
+            exit(1);
+        }
+    }
+
     Updater* updater = new Updater(arena, saiyans);
     pthread_t thread_updater;
-    if (pthread_create(&thread_updater, NULL, Updater::pthread_printer, updater)) {
+    if (pthread_create(&thread_updater, NULL, Updater::pthread_printer,
+    updater)) {
         exit(1);
     }
-    usleep(4000000);
-    // while (1) {
-    // }
-    delete updater;
-    frontend();
 
+    
+    usleep(4000000);
+    for (int i = 0; i < n_saiyans; ++i) {
+        pthread_join(threads[i],NULL);
+        
+    }
+    delete updater;
+    return;
+}
+
+int main() {
+    run_backend();
     return 0;
 }

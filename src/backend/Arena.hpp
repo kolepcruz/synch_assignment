@@ -15,6 +15,6 @@ class Arena {
 
    public:
     Arena(int n_pits);
-    std::vector<Pit>& get_pits() { return m_pits; }
+    std::vector<Pit> &get_pits() { return m_pits; }
 };
 #endif  //__ARENA_HPP__
