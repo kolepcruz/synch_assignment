@@ -1,0 +1,3 @@
+/home/ianloron00/Desktop/Unicamp/2021_1s/OS/synch_assignment/CMakeFiles/rebuild_cache.dir
+/home/ianloron00/Desktop/Unicamp/2021_1s/OS/synch_assignment/CMakeFiles/synch_assignment.dir
+/home/ianloron00/Desktop/Unicamp/2021_1s/OS/synch_assignment/CMakeFiles/edit_cache.dir
