@@ -96,6 +96,7 @@ void Saiyan::heal() {
     }
     while (this->get_current_hp() < this->get_total_hp()) {
         this->current_hp += 50;
+        if(this->current_hp >= this->get_total_hp()) this->current_hp = this->get_total_hp(); 
         sleep(1);
         // std::cout << this->id << "# Saiyan is healing by " << this->get_current_hp() <<" of "<<  this->get_total_hp() << std::endl;
     }
