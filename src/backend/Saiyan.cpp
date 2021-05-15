@@ -10,7 +10,7 @@ void behavior(void* ptr) {
     Context* context = (Context*)(ptr);
     Saiyan* myself = static_cast<Saiyan*>(context->self);
     Infirmary inf = static_cast<Infirmary>(context->inf);
-    sem_t backend_sem = static_cast<sem_t>(context->backend_sem);
+    // sem_t backend_sem = static_cast<sem_t>(context->backend_sem); //creo que no hace falta
 
     bool first = false;
     bool super_saiyan = false;
@@ -46,7 +46,6 @@ void behavior(void* ptr) {
         // começa a distribuição de porrada
         int waiting_ticks = 0;
         while (myself->get_current_hp() > 0 && waiting_ticks < 1000) {
-            
             // FIXME está como busy waiting
             sem_wait(current_pit->get_act_sem());  //semaforo de distribuição de porrada
             if (current_pit->ready_to_fight) {
@@ -57,7 +56,7 @@ void behavior(void* ptr) {
                 } else {
                     myself->receive_attack(*current_pit->lutador1);
                 }
-                usleep(1000);  //adiciona tempo de distribuição de porrada
+                sleep(1);  //adiciona tempo de distribuição de porrada
             }
             sem_post(current_pit->get_act_sem());
             waiting_ticks++;
@@ -66,7 +65,7 @@ void behavior(void* ptr) {
         //sai do pit
         current_pit->ready_to_fight = false;
         myself->set_current_state(HEALING);
-        // myself->current_pit = -1;
+        myself->current_pit = -1;
         if (first) {
             current_pit->lutador1 = nullptr;
         } else {
@@ -92,27 +91,28 @@ Saiyan::Saiyan(unsigned int total_hp, unsigned int attack_pwr, unsigned int id, 
 }
 
 void Saiyan::heal() {
-    this->total_hp += 20;
+    if (this->get_current_hp() == 0) {  //caso esteja trocando de arena nao deve poder ter o upgrade
+        this->total_hp += 20;
+    }
     while (this->get_current_hp() < this->get_total_hp()) {
-        this->current_hp++;
-        usleep(1000);
+        this->current_hp += 50;
+        sleep(1);
         // std::cout << this->id << "# Saiyan is healing by " << this->get_current_hp() <<" of "<<  this->get_total_hp() << std::endl;
     }
 }
 
 void Saiyan::receive_attack(Saiyan enemy) {
-    if (this->current_hp <= 0) {
-        return;
-    }
     this->current_hp -= enemy.get_attack_pwr();
+    if (this->current_hp <= 0) {
+        this->current_hp = 0;
+    }
 }
 //todo -> implementar search de pits com saiyan neles
 
 int Saiyan::try_enter_pit() {
-
-    //code smell, so testando pra ver se faz sentido, 
+    //code smell, so testando pra ver se faz sentido,
     for (Pit& pit : m_arena->get_pits()) {
-        if ( !pit.is_empty() && sem_trywait(pit.get_sem()) == 0) {
+        if (!pit.is_empty() && sem_trywait(pit.get_sem()) == 0) {
             if (pit.lutador1 == nullptr)
                 pit.lutador1 = this;
             else if (pit.lutador2 == nullptr)
@@ -125,7 +125,7 @@ int Saiyan::try_enter_pit() {
             return 0;
         }
     }
-
+    //não achou nenhum ocupado, entao entra no primeiro que estiver com vaga
     for (Pit& pit : m_arena->get_pits()) {
         if (sem_trywait(pit.get_sem()) == 0) {
             if (pit.lutador1 == nullptr)
