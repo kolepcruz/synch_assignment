@@ -4,9 +4,54 @@ WINDOW * ringue;
 WINDOW * enfermaria;
 WINDOW * quadroG;
 
-#define T_CHARGE 800000
-#define T_POWER   80000
-#define T_BLOD   800000  
+int frontend(int n_leitos, vector<Saiyan*> saiyans){
+    initscr();          //inicializa a tela
+    cbreak();           //permite c break (apertar control+c para fechar a aplicação)
+    noecho();           //faz com que as teclas pressionadas não apareçam no terminal
+    start_color();
+    if (!has_colors())
+    {
+      printw("TERMINAL DOES NOT SUPPORT COLORS");
+      getch();
+      return -1;
+    }
+    else
+    {
+      init_pair(1, COLOR_WHITE, COLOR_BLACK);
+      init_pair(2, COLOR_YELLOW, A_NORMAL);
+      init_pair(3, COLOR_BLUE, A_NORMAL);
+      init_pair(4, COLOR_GREEN, A_NORMAL);
+      init_pair(5, COLOR_RED, A_NORMAL);
+      init_pair(6, COLOR_CYAN, A_NORMAL);
+      init_pair(50, A_NORMAL, COLOR_RED);
+      init_pair(60, A_NORMAL, COLOR_CYAN);
+      init_pair(40, A_NORMAL, COLOR_GREEN);
+      init_pair(20, A_NORMAL, COLOR_YELLOW);
+    }
+
+    vector<int>  pacientes;
+    vector<vector<int> > lutadores(2);
+    
+    for(Saiyan* s : saiyans)
+    {
+      if (s->get_current_state() == State(HEALING))
+        pacientes.push_back((int) s->get_id());
+    }
+    
+    for (Pit p : saiyans[0]->get_arena()->get_pits())
+    {
+      int id1 = p.lutador1 == nullptr ? -1 : p.lutador1->get_id();
+      int id2 = p.lutador2 == nullptr ? -1 : p.lutador2->get_id();
+
+      lutadores[0].push_back(id1);
+      lutadores[1].push_back(id2);
+    }
+    
+    drawScreens(n_leitos, pacientes, lutadores);
+
+    endwin();  //fecha a tela
+    return 0;
+}
 
 void time (WINDOW* win, int udelay)
 {
@@ -32,8 +77,8 @@ void printChar(WINDOW* win, int y, int x, int color, const char* c)
     wattroff(win, COLOR_PAIR(color)); 
 }
 
-void desenhaLeito(int n_leitos)
-{
+void drawInfirmary (vector<int> pacientes, int n_leitos)
+{ 
   int width_enf, height_enf;
   int margin_x, margin_y, dist_x, dist_y, n_lin, n_col;
   getmaxyx(enfermaria, height_enf, width_enf);
@@ -50,68 +95,23 @@ void desenhaLeito(int n_leitos)
   {
     for (int j = 1; j <= n_lin; j++)
     {
-      if (n_col*(j-1) + i <= n_leitos)
+      int id_leito = (n_col*(j-1) + i) -1;
+      if (id_leito < n_leitos)
       {
         // subtract i by -1 because the warriors will be at second pos.
         printChar(enfermaria, j*margin_y, i*margin_x-1, 2, "___/");
+        int n_pac = pacientes.size();
+        if (id_leito < n_pac)
+        {
+          printChar(enfermaria, j*margin_y, i*margin_x, 20, pacientes[id_leito]); 
+        }
       }
     }
   }
   wrefresh(enfermaria);
 }
 
-void printPacientes(vector<int> & pacientes, int n_leitos, vector<int> y_id, vector<int> x_id)
-{
-
-  sort(pacientes.begin(), pacientes.end());
-
-  // breaks here
-/*
-  for (int l = 0; l < (int) pacientes.size(); l++)
-  {
-    printChar(enfermaria, y_id[l], x_id[l], 2, pacientes[l]);
-  }
-  for (int l = n_leitos - pacientes.size() - 1; l < n_leitos; l++)
-    printChar(enfermaria, y_id[l], x_id[l], 2, pacientes[l]);
-// */
-}
-
-void desenhaPacientesDinamico (vector<int> & pacientes, int n_leitos)
-{ 
-  vector<int> x_id;
-  vector<int> y_id;
-  
-  int width_enf, height_enf;
-  int margin_x, margin_y, dist_x, dist_y, n_lin, n_col;
-  getmaxyx(enfermaria, height_enf, width_enf);
-
-  float ratio = (float) ((float) height_enf/width_enf);
-
-  n_col = round(sqrt((float) n_leitos/ratio));
-  n_lin = ceil(ratio * n_col);
-
-  margin_x = dist_x = width_enf/(n_col + 1);
-  margin_y = dist_y = height_enf/(n_lin + 1);
-  
-  for (int i = 1; i <= n_col; i++)
-  {
-    for (int j = 1; j <= n_lin; j++)
-    {
-      if (n_col*(j-1) + i <= n_leitos)
-      {
-        // subtract i by -1 because the warriors will be at second pos.
-        // printChar(enfermaria, j*margin_y, i*margin_x-1, 2, "___/");
-        x_id.push_back(i*margin_x);
-        y_id.push_back(j*margin_y);
-      }
-    }
-  }
-  wrefresh(enfermaria);
-  ///////////*************//////////////// crash here
-  printPacientes(pacientes, n_leitos, y_id, x_id);
-}
-
-void printLuts(WINDOW* win, vector<vector<int> > &luts, vector<int> & y_id, 
+void print_in_arena(WINDOW* win, vector<vector<int> > &luts, vector<int> & y_id, 
                   vector<vector<int> > & x_id, 
                   bool pos, int color, unsigned utime)
 {
@@ -122,83 +122,41 @@ void printLuts(WINDOW* win, vector<vector<int> > &luts, vector<int> & y_id,
     int x = x_id[pos][n];
     int val = luts[pos][n];
     if (val > -1 && luts[1- pos][n] > -1)
+    {
       printChar(win, y, x, color, val);
+      // print power
+      if (color == 6)
+        pos == 0? printChar(win, y, x+1, color, ">"): printChar(win, y, x-1, color, "<");
+      else
+      {
+        printChar(win, y, x+1, color, " "); printChar(win, y, x-1, color, " ");
+      }
+    }
   }
+  // here, contains refresh
   time(win, utime);
 }
 
-void printPowersSync(vector<vector<int> > &luts, 
+void syncPowers(vector<vector<int> > &luts, 
                      vector<vector<int> > &x_id, vector<int> &y_id)
 {
-  // int n_pits = luts.size();
-  // int size_pits = x_id[1][0] - x_id[0][0]; // - 1;
-  
-  printLuts(ringue, luts, y_id, x_id, 0, 6, T_CHARGE);
-  printLuts(ringue, luts, y_id, x_id, 0, 1, 0);
+  print_in_arena(ringue, luts, y_id, x_id, 0, 6, T_CHARGE);
+  print_in_arena(ringue, luts, y_id, x_id, 0, 1, 0);
 
-  // POWER INI
-  /*
-  for (int i = 1; i < size_pits; i++)
-  {
-    for (int n = 0; n < n_pits; n++)
-    {
-      int y = y_id[n];
-      int x = i + x_id[0][n];
-
-      printChar(ringue, y, x, 6, "-");
-    }
-    time(ringue, T_POWER);
-
-    for (int n = 0; n < n_pits; n++)
-    {
-      int y = y_id[n];
-      int x = i + x_id[0][n];
-      printChar(ringue, y, x, 6, " ");
-    }
-  }
-  */
-  // POWER ENDS
-
-  printLuts(ringue, luts, y_id, x_id, 1, 50, T_BLOD);
-  printLuts(ringue, luts, y_id, x_id, 1, 1, 0);
+  print_in_arena(ringue, luts, y_id, x_id, 1, 50, T_BLOD);
+  print_in_arena(ringue, luts, y_id, x_id, 1, 1, 0);
 
   // CANONICAL
 
-  printLuts(ringue, luts, y_id, x_id, 1, 6, T_CHARGE);
-  printLuts(ringue, luts, y_id, x_id, 1, 1, 0);
+  print_in_arena(ringue, luts, y_id, x_id, 1, 6, T_CHARGE);
+  print_in_arena(ringue, luts, y_id, x_id, 1, 1, 0);
 
-  // POWER INI
-  /*
-  for (int i = size_pits-1; i >= 0; i--)
-  {
-    for (int n = 0; n < n_pits; n++)
-    {
-      int y = y_id[n];
-      int x = i + x_id[0][n];
-      printChar(ringue, y, x, 6, "-");
-
-    }
-    usleep(T_POWER);
-    wrefresh(ringue);
-
-    for (int n = 0; n < n_pits; n++)
-    {
-      int y = y_id[n];
-      int x = i + x_id[0][n];
-      printChar(ringue, y, x, 6, " ");
-    }
-  }
-  */
-  // POWER ENDS
-
-  printLuts(ringue, luts, y_id, x_id, 0, 50, T_BLOD);
-  wrefresh(ringue);
-  printLuts(ringue, luts, y_id, x_id, 0, 1, 0);
-  wrefresh(ringue);
+  print_in_arena(ringue, luts, y_id, x_id, 0, 50, T_BLOD);
+  print_in_arena(ringue, luts, y_id, x_id, 0, 1, 0);
 }
 
 // para usar em while
-void desenhaLutDinamico (vector<vector<int> > luts)
+void manageFighters (vector<vector<int> > luts)
 { 
   int n_pits = luts.size();
   int margin_x, margin_y, dist_x, dist_y, n_lin, n_col, d_lut;
@@ -225,26 +183,25 @@ void desenhaLutDinamico (vector<vector<int> > luts)
 
       if (pit <= (n_pits) -1)
       {
-        printChar(ringue, j*margin_y, i*margin_x - d_lut, 1, luts[0][pit]);
-        printChar(ringue, j*margin_y, i*margin_x + d_lut, 1, luts[1][pit]);
-
-        string id_pit;
-        id_pit += pit + 48 + '\0';
-        
-        printChar(ringue, j*margin_y+1, i*margin_x, 2, (id_pit).c_str());
-        
         x_id[0].push_back(i*margin_x - d_lut);
         x_id[1].push_back(i*margin_x + d_lut);
         y_id.push_back(j*margin_y);
+        
+        printChar(ringue, j*margin_y, i*margin_x - d_lut, 1, luts[0][pit]);
+        printChar(ringue, j*margin_y, i*margin_x + d_lut, 1, luts[1][pit]);
+
+        // print id pits
+        string id_pit;
+        id_pit += pit + 48 + '\0';
+        printChar(ringue, j*margin_y+1, i*margin_x, 2, (id_pit).c_str());
       }
     }
   }
   wrefresh(ringue);
-  printPowersSync(luts, x_id, y_id);
+  syncPowers(luts, x_id, y_id);
 }
 
-bool drawDinamico(int n_leitos, vector<int> pacientes, vector<vector<int> > lutadores) {
-    
+void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<int> > lutadores) {   
     // altura e largura da tela - usado para desenhar as arenas de acordo  
     // com as especificacoes da tela do usuário. 
     int scr_height, scr_width, margin_y = 0, margin_x = 2; 
@@ -277,7 +234,8 @@ bool drawDinamico(int n_leitos, vector<int> pacientes, vector<vector<int> > luta
     wrefresh(enfermaria);                                   
 
     //desenhar os leitos inicialmente
-    desenhaLeito(n_leitos);
+    // desenhaLeito(n_leitos);
+    drawInfirmary(pacientes, n_leitos);
 
     //criação do ringue
     ringue = newwin(height_lut, width_lut, begin_y_lut, begin_x_lut);
@@ -286,8 +244,7 @@ bool drawDinamico(int n_leitos, vector<int> pacientes, vector<vector<int> > luta
     mvwprintw(ringue, 0, width_lut/2 - 3, "RINGUE");
     wrefresh(ringue);  
     
-    desenhaLutDinamico(lutadores);
-    desenhaPacientesDinamico(pacientes, n_leitos);
+    manageFighters(lutadores);
 
     //criação do quadro geral
     quadroG = newwin(height_qg, width_qg, begin_y_qg, begin_x_qg);  
@@ -295,65 +252,7 @@ bool drawDinamico(int n_leitos, vector<int> pacientes, vector<vector<int> > luta
     box(quadroG, 0, 0);
     mvwprintw(quadroG, 0, begin_x_qg/2 - 12, "ESTADO DE CADA LUTADOR");
     wrefresh(quadroG);
-    return true;
 }
-
-int frontend(int n_leitos, vector<Saiyan*> saiyans){
-    initscr();          //inicializa a tela
-    cbreak();           //permite c break (apertar control+c para fechar a aplicação)
-    noecho();           //faz com que as teclas pressionadas não apareçam no terminal
-    // intro();
-    start_color();
-    if (!has_colors())
-    {
-      printw("TERMINAL DOES NOT SUPPORT COLORS");
-      getch();
-      return -1;
-    }
-    else
-    {
-      init_pair(1, COLOR_WHITE, COLOR_BLACK);
-      init_pair(2, COLOR_YELLOW, A_NORMAL);
-      init_pair(3, COLOR_BLUE, A_NORMAL);
-      init_pair(4, COLOR_GREEN, A_NORMAL);
-      init_pair(5, COLOR_RED, A_NORMAL);
-      init_pair(6, COLOR_CYAN, A_NORMAL);
-      init_pair(50, A_NORMAL, COLOR_RED);
-      init_pair(60, A_NORMAL, COLOR_CYAN);
-      init_pair(40, A_NORMAL, COLOR_GREEN);
-    }
-    drawInicial(n_leitos);     //desenhar as telas principais e inicias
-
-    vector<int>  pacientes;
-    vector<vector<int> > lutadores(2);
-    
-    for(Saiyan* s : saiyans)
-    {
-      if (s->get_current_state() == State(HEALING))
-        pacientes.push_back((int) s->get_id());
-    }
-    
-    for (Pit p : saiyans[0]->get_arena()->get_pits())
-    {
-      int id1 = p.lutador1 == nullptr ? -1 : p.lutador1->get_id();
-      int id2 = p.lutador2 == nullptr ? -1 : p.lutador2->get_id();
-
-      lutadores[0].push_back(id1);
-      lutadores[1].push_back(id2);
-    }
-
-    bool done = false;
-    while (!done){
-      done = drawDinamico(n_leitos, pacientes, lutadores);       
-    }
-    
-    // while (getch() != 27){}
-    endwin();  //fecha a tela
-    return 0;
-}
-
-
-
 
 
 
@@ -414,7 +313,7 @@ void drawInicial(int n_leitos) {
     wrefresh(enfermaria);                                   
 
     //desenhar os leitos inicialmente
-    desenhaLeito(n_leitos);
+    drawInfirmary({}, n_leitos);
 
     //criação do ringue
     ringue = newwin(height_lut, width_lut, begin_y_lut, begin_x_lut);
