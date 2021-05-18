@@ -12,9 +12,10 @@ class Arena;
 
 typedef enum {
     FIGHTING,
+    DEFENDING,
     HEALING,
     WAITING,
-    FINISHED
+    FINISHED,
 } State;
 
 class Saiyan {

@@ -46,16 +46,17 @@ void behavior(void* ptr) {
         // começa a distribuição de porrada
         int waiting_ticks = 0;
         while (myself->get_current_hp() > 0 && waiting_ticks < 1000) {
+            myself->set_current_state(FIGHTING);
             // FIXME está como busy waiting
             sem_wait(current_pit->get_act_sem());  //semaforo de distribuição de porrada
             if (current_pit->ready_to_fight) {
                 waiting_ticks = 0;
                 if (first) {
                     myself->receive_attack(*current_pit->lutador2);
-
                 } else {
                     myself->receive_attack(*current_pit->lutador1);
                 }
+                myself->set_current_state(DEFENDING);
                 sleep(1);  //adiciona tempo de distribuição de porrada
             }
             sem_post(current_pit->get_act_sem());
