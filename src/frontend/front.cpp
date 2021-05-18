@@ -207,19 +207,19 @@ void drawGenFrame(vector<Saiyan*> saiyans)
 {
   int n_lin = saiyans.size();
   int margin_x, dist_y;
-  int width_ringue, height_ringue;
-  getmaxyx(ringue, height_ringue, width_ringue);  
+  int width_quadroG, height_quadroG;
+  getmaxyx(quadroG, height_quadroG, width_quadroG);  
 
   // 25 is the (probable) size of the Frame.
-  margin_x = (width_ringue - 24+5)/2;
-  dist_y = height_ringue/(n_lin + 1);
+  margin_x = (width_quadroG - 24+5)/2;
+  dist_y = height_quadroG/(n_lin + 2);
 
-  string ini_line = "Saiyadins:\n";
-  ini_line += "id curr_hp / tot_hp atck c_pit";
+  printChar(quadroG, dist_y, margin_x, 1, "Saiyadins:");
+  printChar(quadroG, dist_y+1, margin_x, 1, "id hp / t_hp atck pit");
 
-  for (int j = 1; j <= n_lin; j++)
+  for (int j = 2; j <= n_lin+1; j++)
   {
-    int id = j-1;
+    int id = j-2;
     int curr_state = saiyans[id]->get_current_state();
     int color = 1;
     if (curr_state == State(DEFENDING))
@@ -230,7 +230,7 @@ void drawGenFrame(vector<Saiyan*> saiyans)
       color = 40;
 
     char buf[256];
-    char pattern[] = "%c %3d /%4d %3d  %2d";
+    char pattern[] = "%c  %3d / %4d %3d  %2d";
     Saiyan* s = saiyans[id];
 
     char id_s = s->get_id() + 65 + '\0';
