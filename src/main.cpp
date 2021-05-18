@@ -21,10 +21,10 @@ typedef void* (*THREADFUNCPTR)(void*);
 //TODO implement semaphore for main, read semaphore value 
 void run_backend() {
     sem_t backend_sema;
-    // sem_init(&backend_sema,1,SAIYAN_AMMOUNT-1); //n - 1 saiyan ira virar super saiyan, talvez nao precisa desse semaforo
+    sem_init(&backend_sema,1,SAIYAN_AMMOUNT-1); //n - 1 saiyan ira virar super saiyan, talvez nao precisa desse semaforo
     sem_t *p_backend_sema = &backend_sema;
     int* result;
-    Infirmary* inf = new Infirmary(4);
+    Infirmary* inf = new Infirmary(2);
     Arena* arena = new Arena(2);
     std::vector<Saiyan*> saiyans;
     int n_saiyans = SAIYAN_AMMOUNT;

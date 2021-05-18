@@ -40,9 +40,9 @@ class Updater {
                 std::cout << buf << '\n';
             }
 
-            char pattern_arena[] = "%2d %3d %3d    %1d";
+            char pattern_arena[] = "%2d %3d %3d    %1d       %d";
             std::cout << "Arena" << '\n';
-            std::cout << "id0 id1 id2 pit_state" << '\n';
+            std::cout << "id0 id1 id2 pit_state sem_val" << '\n';
             for (Pit p : me->m_p_arena->get_pits()) {
                 int id1;
                 int id2;
@@ -56,7 +56,9 @@ class Updater {
                 } else {
                     id2 = p.lutador2->get_id();
                 }
-                sprintf(buf, pattern_arena, p.get_id(), id1, id2, p.ready_to_fight);
+                int aux;
+                sem_getvalue(p.get_act_sem(),&aux);
+                sprintf(buf, pattern_arena, p.get_id(), id1, id2, p.ready_to_fight,aux);
                 std::cout << buf << '\n';
             }
 

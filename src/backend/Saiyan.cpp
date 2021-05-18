@@ -37,7 +37,7 @@ void behavior(void* ptr) {
                 current_pit->ready_to_fight = true;
         }
         myself->set_current_state(FIGHTING);
-        first = (current_pit->lutador1 == myself);
+        Saiyan* opponent = (current_pit->lutador1 == myself)? current_pit->lutador2: current_pit->lutador1; 
         // ate aqui tenho que confirmar que os dois lutadores estão na parada
 
         // aqui pode começar a luta, olhar semaforo da enfermaria se esta com
@@ -49,14 +49,10 @@ void behavior(void* ptr) {
             // FIXME está como busy waiting
             sem_wait(current_pit->get_act_sem());  //semaforo de distribuição de porrada
             if (current_pit->ready_to_fight) {
+                myself->set_current_state(ATTACKING);
+                sleep(1);
+                myself->attack(*opponent);
                 waiting_ticks = 0;
-                if (first) {
-                    myself->receive_attack(*current_pit->lutador2);
-
-                } else {
-                    myself->receive_attack(*current_pit->lutador1);
-                }
-                sleep(1);  //adiciona tempo de distribuição de porrada
             }
             sem_post(current_pit->get_act_sem());
             waiting_ticks++;
@@ -94,19 +90,16 @@ void Saiyan::heal() {
     if (this->get_current_hp() == 0) {  //caso esteja trocando de arena nao deve poder ter o upgrade
         this->total_hp += 20;
     }
-    while (this->get_current_hp() < this->get_total_hp()) {
+    while ( this->get_total_hp() - this->get_current_hp() > 0 ) {
         this->current_hp += 50;
-        if(this->current_hp >= this->get_total_hp()) this->current_hp = this->get_total_hp(); 
+        if(this->current_hp >=  (int) this->get_total_hp()) this->current_hp = (int) this->get_total_hp(); 
         sleep(1);
         // std::cout << this->id << "# Saiyan is healing by " << this->get_current_hp() <<" of "<<  this->get_total_hp() << std::endl;
     }
 }
 
-void Saiyan::receive_attack(Saiyan enemy) {
-    this->current_hp -= enemy.get_attack_pwr();
-    if (this->current_hp <= 0) {
-        this->current_hp = 0;
-    }
+void Saiyan::attack(Saiyan &enemy) {
+    enemy.set_current_hp(enemy.get_current_hp() - this->get_attack_pwr());
 }
 //todo -> implementar search de pits com saiyan neles
 
