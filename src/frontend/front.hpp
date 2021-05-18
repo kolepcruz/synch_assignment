@@ -21,9 +21,7 @@
 typedef unsigned int ui;
 using namespace std;
 
-#define T_CHARGE 300000
-#define T_POWER   80000
-#define T_BLOD   300000  
+#define T_FRAME  600000
 
 void time (WINDOW* win, int udelay);
 void printChar(WINDOW* win, int y, int x, int color, int val);
@@ -31,13 +29,9 @@ void printChar(WINDOW* win, int y, int x, int color, const char* c);
 
 void drawInfirmary (vector<int> pacientes, int n_leitos);
 
-void print_in_arena(WINDOW* win, vector<vector<int> > &luts, vector<int> & y_id, 
-                  vector<vector<int> > & x_id, 
-                  bool pos, int color, unsigned utime);
-void syncPowers(vector<vector<int> > &luts, vector<vector<int> > &x_id, vector<int> &y_id);
-void manageFighters (vector<vector<int> > luts);
+void drawFighters (vector<vector<Saiyan*> > fighters);
 
-void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<int> > lutadores);
+void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<Saiyan*> > fighters);
 
 int frontend(int n_leitos, vector<Saiyan*> saiyans);
 

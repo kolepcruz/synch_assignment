@@ -30,7 +30,7 @@ int frontend(int n_leitos, vector<Saiyan*> saiyans){
     }
 
     vector<int>  pacientes;
-    vector<vector<int> > lutadores(2);
+    vector<vector<Saiyan*> > fighters(2);
     
     for(Saiyan* s : saiyans)
     {
@@ -40,14 +40,11 @@ int frontend(int n_leitos, vector<Saiyan*> saiyans){
     
     for (Pit p : saiyans[0]->get_arena()->get_pits())
     {
-      int id1 = p.lutador1 == nullptr ? -1 : p.lutador1->get_id();
-      int id2 = p.lutador2 == nullptr ? -1 : p.lutador2->get_id();
-
-      lutadores[0].push_back(id1);
-      lutadores[1].push_back(id2);
+      fighters[0].push_back(p.lutador1);
+      fighters[1].push_back(p.lutador2);
     }
     
-    drawScreens(n_leitos, pacientes, lutadores);
+    drawScreens(n_leitos, pacientes, fighters);
 
     endwin();  //fecha a tela
     return 0;
@@ -61,7 +58,8 @@ void time (WINDOW* win, int udelay)
 
 void printChar(WINDOW* win, int y, int x, int color, int val)
 {
-    string s_l; 
+    string s_l;
+    // transform int into char
     s_l += val == -1 ? ' ' : val + 65 + '\0';
     
     const char* l = s_l.c_str();
@@ -82,6 +80,7 @@ void drawInfirmary (vector<int> pacientes, int n_leitos)
   int width_enf, height_enf;
   int margin_x, margin_y, dist_x, dist_y, n_lin, n_col;
   getmaxyx(enfermaria, height_enf, width_enf);
+  sort(pacientes.begin(), pacientes.end());
 
   float ratio = (float) ((float) height_enf/width_enf);
 
@@ -111,54 +110,10 @@ void drawInfirmary (vector<int> pacientes, int n_leitos)
   wrefresh(enfermaria);
 }
 
-void print_in_arena(WINDOW* win, vector<vector<int> > &luts, vector<int> & y_id, 
-                  vector<vector<int> > & x_id, 
-                  bool pos, int color, unsigned utime)
-{
-  int n_pits = y_id.size();
-  for (int n = 0; n < n_pits; n++)
-  {
-    int y = y_id[n];
-    int x = x_id[pos][n];
-    int val = luts[pos][n];
-    if (val > -1 && luts[1- pos][n] > -1)
-    {
-      printChar(win, y, x, color, val);
-      // print power
-      if (color == 6)
-        pos == 0? printChar(win, y, x+1, color, ">"): printChar(win, y, x-1, color, "<");
-      else
-      {
-        printChar(win, y, x+1, color, " "); printChar(win, y, x-1, color, " ");
-      }
-    }
-  }
-  // here, contains refresh
-  time(win, utime);
-}
-
-void syncPowers(vector<vector<int> > &luts, 
-                     vector<vector<int> > &x_id, vector<int> &y_id)
-{
-  print_in_arena(ringue, luts, y_id, x_id, 0, 6, T_CHARGE);
-  print_in_arena(ringue, luts, y_id, x_id, 0, 1, 0);
-
-  print_in_arena(ringue, luts, y_id, x_id, 1, 50, T_BLOD);
-  print_in_arena(ringue, luts, y_id, x_id, 1, 1, 0);
-
-  // CANONICAL
-
-  print_in_arena(ringue, luts, y_id, x_id, 1, 6, T_CHARGE);
-  print_in_arena(ringue, luts, y_id, x_id, 1, 1, 0);
-
-  print_in_arena(ringue, luts, y_id, x_id, 0, 50, T_BLOD);
-  print_in_arena(ringue, luts, y_id, x_id, 0, 1, 0);
-}
-
 // para usar em while
-void manageFighters (vector<vector<int> > luts)
+void drawFighters (vector<vector<Saiyan*> > fighters)
 { 
-  int n_pits = luts.size();
+  int n_pits = fighters.size();
   int margin_x, margin_y, dist_x, dist_y, n_lin, n_col, d_lut;
   int width_ringue, height_ringue;
   getmaxyx(ringue, height_ringue, width_ringue);
@@ -172,9 +127,6 @@ void manageFighters (vector<vector<int> > luts)
   margin_y = dist_y = height_ringue/(n_lin + 1);
   d_lut = (int) (margin_x/3.5);
 
-  vector<vector<int> > x_id(2);
-  vector<int> y_id;
-
   for (int j = 1; j <= n_lin; j++)
   {
     for (int i = 1; i <= n_col; i++)
@@ -183,25 +135,45 @@ void manageFighters (vector<vector<int> > luts)
 
       if (pit <= (n_pits) -1)
       {
-        x_id[0].push_back(i*margin_x - d_lut);
-        x_id[1].push_back(i*margin_x + d_lut);
-        y_id.push_back(j*margin_y);
+        int val_1 = fighters[0][pit] == nullptr ? -1 : fighters[0][pit]->get_id();
+        int val_2 = fighters[1][pit] == nullptr ? -1 : fighters[1][pit]->get_id();
+        int x_1 = i*margin_x - d_lut;
+        int x_2 = i*margin_x + d_lut;
+        int y = j*margin_y;
+
+        printChar(ringue, y, x_1, 1, val_1);
+        printChar(ringue, y, x_2, 1, val_2);
         
-        printChar(ringue, j*margin_y, i*margin_x - d_lut, 1, luts[0][pit]);
-        printChar(ringue, j*margin_y, i*margin_x + d_lut, 1, luts[1][pit]);
+        // print powers and effects
+        if (val_1 != -1 && fighters[0][pit]->get_current_state() == State(DEFENDING))
+        {
+          printChar(ringue, y, x_1, 50, val_1);
+          printChar(ringue, y, x_2, 6, val_2);
+          printChar(ringue, y, x_2-1, 6, "<");
+        }
+
+        else if(val_2 != -1 && fighters[1][pit]->get_current_state() == State(DEFENDING))
+        {
+          printChar(ringue, y, x_2, 50, val_2);
+          printChar(ringue, y, x_1, 6, val_1);
+          printChar(ringue, y, x_1+1, 6, ">");
+        }
+
+        // print pit  
+        string c = string(2*d_lut+1, '-');
+        printChar(ringue, y+1, x_1, 2, (const char*) c.c_str());
 
         // print id pits
         string id_pit;
         id_pit += pit + 48 + '\0';
-        printChar(ringue, j*margin_y+1, i*margin_x, 2, (id_pit).c_str());
+        printChar(ringue, y+1, i*margin_x, 2, (id_pit).c_str());
       }
     }
   }
-  wrefresh(ringue);
-  syncPowers(luts, x_id, y_id);
+  time(ringue, T_FRAME);
 }
 
-void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<int> > lutadores) {   
+void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<Saiyan*> > saiyans) {   
     // altura e largura da tela - usado para desenhar as arenas de acordo  
     // com as especificacoes da tela do usuário. 
     int scr_height, scr_width, margin_y = 0, margin_x = 2; 
@@ -233,8 +205,6 @@ void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<int> > lutad
     mvwprintw(enfermaria, 0, width_enf/2 - 4,"ENFERMARIA");         
     wrefresh(enfermaria);                                   
 
-    //desenhar os leitos inicialmente
-    // desenhaLeito(n_leitos);
     drawInfirmary(pacientes, n_leitos);
 
     //criação do ringue
@@ -244,7 +214,7 @@ void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<int> > lutad
     mvwprintw(ringue, 0, width_lut/2 - 3, "RINGUE");
     wrefresh(ringue);  
     
-    manageFighters(lutadores);
+    drawFighters(saiyans);
 
     //criação do quadro geral
     quadroG = newwin(height_qg, width_qg, begin_y_qg, begin_x_qg);  
@@ -363,3 +333,49 @@ void intro(){
     clear();
     return;
 }
+
+/*
+void print_in_arena(WINDOW* win, vector<vector<int> > &luts, vector<int> & y_id, 
+                  vector<vector<int> > & x_id, 
+                  bool pos, int color, unsigned utime)
+{
+  int n_pits = y_id.size();
+  for (int n = 0; n < n_pits; n++)
+  {
+    int y = y_id[n];
+    int x = x_id[pos][n];
+    int val = luts[pos][n];
+    if (val > -1 && luts[1- pos][n] > -1)
+    {
+      printChar(win, y, x, color, val);
+      // print power
+      if (color == 6)
+        pos == 0? printChar(win, y, x+1, color, ">"): printChar(win, y, x-1, color, "<");
+      else
+      {
+        printChar(win, y, x+1, color, " "); printChar(win, y, x-1, color, " ");
+      }
+    }
+  }
+  // here, contains refresh
+  // time(win, utime);
+}
+
+void syncPowers(vector<vector<int> > &luts, 
+                     vector<vector<int> > &x_id, vector<int> &y_id)
+{
+  print_in_arena(ringue, luts, y_id, x_id, 0, 6, T_CHARGE);
+  print_in_arena(ringue, luts, y_id, x_id, 0, 1, 0);
+
+  print_in_arena(ringue, luts, y_id, x_id, 1, 50, T_BLOD);
+  print_in_arena(ringue, luts, y_id, x_id, 1, 1, 0);
+
+  // CANONICAL
+
+  print_in_arena(ringue, luts, y_id, x_id, 1, 6, T_CHARGE);
+  print_in_arena(ringue, luts, y_id, x_id, 1, 1, 0);
+
+  print_in_arena(ringue, luts, y_id, x_id, 0, 50, T_BLOD);
+  print_in_arena(ringue, luts, y_id, x_id, 0, 1, 0);
+}
+*/
