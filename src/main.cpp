@@ -60,6 +60,14 @@ void run_backend() {
 }
 
 int main() {
+  
+    initscr();          //inicializa a tela
+    cbreak();           //permite c break (apertar control+c para fechar a aplicação)
+    noecho();           //faz com que as teclas pressionadas não apareçam no terminal
+
+    intro();
     run_backend();
+
+    endwin();  //fecha a tela
     return 0;
 }
