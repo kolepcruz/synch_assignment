@@ -2,6 +2,17 @@
 
 #include "Context.hpp"
 
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+void increment_nSSaiyan() {
+    pthread_mutex_lock(&lock);
+    n_s_saiyan++;
+    pthread_mutex_unlock(&lock);
+    if(n_s_saiyan  >= SAIYAN_AMMOUNT - 1)
+        exit(0);
+}
+
+
 // este es el codigo con mas memory leak que ya hice
 // esta funcion deberia receber un struct de argumentos que seria el contexto,
 // recibiendo la thread y los punteros para la enfermaria, etc
@@ -46,16 +57,17 @@ void behavior(void* ptr) {
         // começa a distribuição de porrada
         int waiting_ticks = 0;
         while (myself->get_current_hp() > 0 && waiting_ticks < 1000) {
+            myself->set_current_state(FIGHTING);
             // FIXME está como busy waiting
             sem_wait(current_pit->get_act_sem());  //semaforo de distribuição de porrada
             if (current_pit->ready_to_fight) {
                 waiting_ticks = 0;
                 if (first) {
                     myself->receive_attack(*current_pit->lutador2);
-
                 } else {
                     myself->receive_attack(*current_pit->lutador1);
                 }
+                myself->set_current_state(DEFENDING);
                 sleep(1);  //adiciona tempo de distribuição de porrada
             }
             sem_post(current_pit->get_act_sem());
@@ -77,6 +89,7 @@ void behavior(void* ptr) {
         if (myself->get_total_hp() >= LIFE_THRESHOLD) {
             super_saiyan = true;  //Mais rapido que goku em namek
             myself->set_current_state(FINISHED);
+            increment_nSSaiyan();
         }
     }
 }
