@@ -21,7 +21,8 @@
 typedef unsigned int ui;
 using namespace std;
 
-#define T_FRAME  600000
+#define T_FRAME  750000
+#define T_POWER  250000
 
 void time (WINDOW* win, int udelay);
 void printChar(WINDOW* win, int y, int x, int color, int val);
