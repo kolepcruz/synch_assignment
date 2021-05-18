@@ -2,6 +2,17 @@
 
 #include "Context.hpp"
 
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+void increment_nSSaiyan() {
+    pthread_mutex_lock(&lock);
+    n_s_saiyan++;
+    pthread_mutex_unlock(&lock);
+    if(n_s_saiyan  >= SAIYAN_AMMOUNT - 1)
+        exit(0);
+}
+
+
 // este es el codigo con mas memory leak que ya hice
 // esta funcion deberia receber un struct de argumentos que seria el contexto,
 // recibiendo la thread y los punteros para la enfermaria, etc
@@ -78,6 +89,7 @@ void behavior(void* ptr) {
         if (myself->get_total_hp() >= LIFE_THRESHOLD) {
             super_saiyan = true;  //Mais rapido que goku em namek
             myself->set_current_state(FINISHED);
+            increment_nSSaiyan();
         }
     }
 }

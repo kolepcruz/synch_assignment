@@ -6,8 +6,11 @@
 #include <iostream>
 
 #include "Arena.hpp"
-#define LIFE_THRESHOLD 500
+#define LIFE_THRESHOLD 200
+#define SAIYAN_AMMOUNT 4
 
+
+static unsigned int n_s_saiyan = 0;
 class Arena;
 
 typedef enum {
