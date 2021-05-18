@@ -5,33 +5,32 @@ WINDOW * enfermaria;
 WINDOW * quadroG;
 
 void intro(){
-    ui y = 5;
     ui ini_x_saiyadin = 5;
     ui ini_x_name = 10;
-    mvprintw(y+00,ini_x_saiyadin, " .d8888b.                                          .d8888b.           d8b                      d8b d8b                  ");
-    mvprintw(y+01,ini_x_saiyadin, "d88P  Y88b                                        d88P  Y88b          Y8P                      Y8P Y8P                  ");
-    mvprintw(y+02,ini_x_saiyadin, "Y88b.                                             Y88b.                                                                 ");
-    mvprintw(y+03,ini_x_saiyadin, " 'Y888b.   888  888 88888b.   .d88b.  888d888      'Y888b.    8888b.  888 888  888  8888b.    8888 888 88888b.  .d8888b ");
-    mvprintw(y+04,ini_x_saiyadin, "    'Y88b. 888  888 888 '88b d8P  Y8b 888P'           'Y88b.     '88b 888 888  888     '88b   '888 888 888 '88b 88K     ");
-    mvprintw(y+05,ini_x_saiyadin, "      '888 888  888 888  888 88888888 888               '888 .d888888 888 888  888 .d888888    888 888 888  888 'Y8888b.");
-    mvprintw(y+06,ini_x_saiyadin, "Y88b  d88P Y88b 888 888 d88P Y8b.     888         Y88b  d88P 888  888 888 Y88b 888 888  888    888 888 888  888      X88");
-    mvprintw(y+07,ini_x_saiyadin, " 'Y8888P'   'Y88888 88888P'   'Y8888  888          'Y8888P'  'Y888888 888  'Y88888 'Y888888    888 888 888  888  88888P'");
-    mvprintw(y+ 8,ini_x_saiyadin, "                    888                                                        888             888                      ");
-    mvprintw(y+ 9,ini_x_saiyadin, "                    888                                                   Y8b d88P            d88P                      ");
-    mvprintw(y+10,ini_x_saiyadin, "                    888                                                    'Y88P'           888P'                       ");
-    mvprintw(y+13,ini_x_saiyadin, "   Os Saiyajins são uma raça alienígena super poderosa e formada para guerra, sua maior força vem no seu momento de maior");
-    mvprintw(y+14,ini_x_saiyadin, "fraqueza, quando estão a beira de sua morte, quando ativam um estado chamado Super Saiyajin, em que sua aparência se    ");    
-    mvprintw(y+15,ini_x_saiyadin, "modfica, seu cabelo muda de cor, e sua força vital aumenta assim como seu ataque.                                       ");
-    mvprintw(y+17,ini_x_saiyadin, "   Um grupo de Sayajins decidiram se unir e formar um grupo de luta, onde o objetivo (bem psicopata se parar pra pensar)");
-    mvprintw(y+18,ini_x_saiyadin, "é lutarem entre si, e levarem um ao outro perto o suficiente da morte para ativar o estado Super Saiyajin, sem os riscos");
-    mvprintw(y+19,ini_x_saiyadin, " de morrer, e depois se recuperarem em uma enfermaria, mantendo o aumento de força e energia vital. O objetivo de todos ");
-    mvprintw(y+20,ini_x_saiyadin, "os Sayajins é de atigirem mais de 8000 pontos de energia vital, mas garantindo que sempre que um membro fique machucado ");
-    mvprintw(y+21,ini_x_saiyadin, "haja um leito disponível para ele na Enfermaria.");
-    mvprintw(y+23,ini_x_name, "by Rodrigo de Araujo Sacerdote");
-    mvprintw(y+24,ini_x_name, "   Leonardo Kenji Kobaicy");
-    mvprintw(y+25,ini_x_name, "   Enrique Antonio Ponce Cruz");
-    mvprintw(y+26,ini_x_name, "   Ian Loron de Almeida");
-    mvprintw(y+29,ini_x_name, "PRESS ENTER TO CONTINUE");
+    mvprintw(00,ini_x_saiyadin, " .d8888b.                                          .d8888b.           d8b                      d8b d8b                  ");
+    mvprintw(01,ini_x_saiyadin, "d88P  Y88b                                        d88P  Y88b          Y8P                      Y8P Y8P                  ");
+    mvprintw(02,ini_x_saiyadin, "Y88b.                                             Y88b.                                                                 ");
+    mvprintw(03,ini_x_saiyadin, " 'Y888b.   888  888 88888b.   .d88b.  888d888      'Y888b.    8888b.  888 888  888  8888b.    8888 888 88888b.  .d8888b ");
+    mvprintw(04,ini_x_saiyadin, "    'Y88b. 888  888 888 '88b d8P  Y8b 888P'           'Y88b.     '88b 888 888  888     '88b   '888 888 888 '88b 88K     ");
+    mvprintw(05,ini_x_saiyadin, "      '888 888  888 888  888 88888888 888               '888 .d888888 888 888  888 .d888888    888 888 888  888 'Y8888b.");
+    mvprintw(06,ini_x_saiyadin, "Y88b  d88P Y88b 888 888 d88P Y8b.     888         Y88b  d88P 888  888 888 Y88b 888 888  888    888 888 888  888      X88");
+    mvprintw(07,ini_x_saiyadin, " 'Y8888P'   'Y88888 88888P'   'Y8888  888          'Y8888P'  'Y888888 888  'Y88888 'Y888888    888 888 888  888  88888P'");
+    mvprintw( 8,ini_x_saiyadin, "                    888                                                        888             888                      ");
+    mvprintw( 9,ini_x_saiyadin, "                    888                                                   Y8b d88P            d88P                      ");
+    mvprintw(10,ini_x_saiyadin, "                    888                                                    'Y88P'           888P'                       ");
+    mvprintw(13,ini_x_saiyadin, "   Os Saiyajins são uma raça alienígena super poderosa e formada para guerra, sua maior força vem no seu momento de maior");
+    mvprintw(14,ini_x_saiyadin, "fraqueza, quando estão a beira de sua morte, quando ativam um estado chamado Super Saiyajin, em que sua aparência se    ");    
+    mvprintw(15,ini_x_saiyadin, "modfica, seu cabelo muda de cor, e sua força vital aumenta assim como seu ataque.                                       ");
+    mvprintw(17,ini_x_saiyadin, "   Um grupo de Sayajins decidiram se unir e formar um grupo de luta, onde o objetivo (bem psicopata se parar pra pensar)");
+    mvprintw(18,ini_x_saiyadin, "é lutarem entre si, e levarem um ao outro perto o suficiente da morte para ativar o estado Super Saiyajin, sem os riscos");
+    mvprintw(19,ini_x_saiyadin, " de morrer, e depois se recuperarem em uma enfermaria, mantendo o aumento de força e energia vital. O objetivo de todos ");
+    mvprintw(20,ini_x_saiyadin, "os Sayajins é de atigirem mais de 8000 pontos de energia vital, mas garantindo que sempre que um membro fique machucado ");
+    mvprintw(21,ini_x_saiyadin, "haja um leito disponível para ele na Enfermaria.");
+    mvprintw(23,ini_x_name, "by Rodrigo de Araujo Sacerdote");
+    mvprintw(24,ini_x_name, "   Leonardo Kenji Kobaicy");
+    mvprintw(25,ini_x_name, "   Enrique Antonio Ponce Cruz");
+    mvprintw(26,ini_x_name, "   Ian Loron de Almeida");
+    mvprintw(29,ini_x_name, "PRESS ENTER TO CONTINUE");
     refresh();
     while (getch() != 10){}
     clear();
@@ -217,8 +216,28 @@ void drawGenFrame(vector<Saiyan*> saiyans)
 
   printChar(quadroG, dist_y, margin_x, 1, "Saiyadins:");
   printChar(quadroG, dist_y+1, margin_x, 1, "id hp / t_hp atck pit");
-
   for (int j = 2; j <= n_lin+1; j++)
+  {
+    int id = j-2;
+    int curr_state = saiyans[id]->get_current_state();
+    int color = 1;
+    if (curr_state == State(FINISHED))
+      color = 40;
+
+    char buf[256];
+    char pattern[] = "%c  %3d / %4d %3d  %2d";
+    Saiyan* s = saiyans[id];
+
+    char id_s = s->get_id() + 65 + '\0';
+    sprintf(buf, pattern, id_s, s->get_current_hp(),
+            s->get_total_hp(), s->get_attack_pwr(),s->current_pit);  
+    string line = buf;
+    printChar(quadroG, j*dist_y, margin_x, color, line.c_str());
+  }
+  wrefresh(quadroG);
+  usleep(750000);
+
+    for (int j = 2; j <= n_lin+1; j++)
   {
     int id = j-2;
     int curr_state = saiyans[id]->get_current_state();
@@ -241,6 +260,9 @@ void drawGenFrame(vector<Saiyan*> saiyans)
     printChar(quadroG, j*dist_y, margin_x, color, line.c_str());
   }
   wrefresh(quadroG);
+
+
+
 }
 
 void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<Saiyan*> > fighters,
