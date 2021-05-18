@@ -30,6 +30,7 @@ class Updater {
         Updater* me = (Updater*)me__;
         while (!me->m_stop) 
         {
+          /*
             std::cout << "-------frame-------" << '\n';
             char buf[256];
             char pattern[] = "%2d %3d /%4d %3d  %2d";
@@ -47,25 +48,14 @@ class Updater {
             for (Pit p : me->m_p_arena->get_pits()) {
                 int id1 = p.lutador1 == nullptr ? -1 : p.lutador1->get_id();
                 int id2 = p.lutador2 == nullptr ? -1 : p.lutador2->get_id();
-                /*
-                int id2;
-                if (p.lutador1 == nullptr) {
-                    id1 = -1;
-                } else {
-                    id1 = p.lutador1->get_id();
-                }
-                if (p.lutador2 == nullptr) {
-                    id2 = -1;
-                } else {
-                    id2 = p.lutador2->get_id();
-                }
-                */
+                
                 sprintf(buf, pattern_arena, p.get_id(), id1, id2, p.ready_to_fight);
                 std::cout << buf << '\n';
             }
 
             std::cout << "-------------------" << '\n';
             std::cout.flush();
+          */
             std::this_thread::sleep_for(std::chrono::milliseconds(500 / 2));
 
             frontend(4, me->m_saiyans);

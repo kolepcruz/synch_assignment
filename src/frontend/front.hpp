@@ -27,11 +27,16 @@ void time (WINDOW* win, int udelay);
 void printChar(WINDOW* win, int y, int x, int color, int val);
 void printChar(WINDOW* win, int y, int x, int color, const char* c);
 
+void intro();
+
 void drawInfirmary (vector<int> pacientes, int n_leitos);
 
 void drawFighters (vector<vector<Saiyan*> > fighters);
 
-void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<Saiyan*> > fighters);
+void drawGenFrame(vector<Saiyan*> saiyans);
+
+void drawScreens(int n_leitos, vector<int> pacientes, vector<vector<Saiyan*> > fighters, 
+                vector<Saiyan*>  saiyans);
 
 int frontend(int n_leitos, vector<Saiyan*> saiyans);
 
